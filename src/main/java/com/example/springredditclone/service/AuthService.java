@@ -50,6 +50,7 @@ public class AuthService {
         String token = generateVerificationToken(user);
         String message = mailContentBuilder.build("Thank you for signing up to Spring Reddit, please click on the below url to activate your account : "
         + ACTIVATION_EMAIL + "/" + token);
+        log.info(message);
         mailService.senMail(new NotificationEmail("Please Activate your account", user.getEmail(), message));
 
     
