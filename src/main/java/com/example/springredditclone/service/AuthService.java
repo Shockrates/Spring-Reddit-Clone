@@ -44,14 +44,13 @@ public class AuthService {
         user.setCreated(now());
         user.setEnabled(false);
 
-      
         userRepository.save(user);
 
         String token = generateVerificationToken(user);
         String message = mailContentBuilder.build("Thank you for signing up to Spring Reddit, please click on the below url to activate your account : "
         + ACTIVATION_EMAIL + "/" + token);
-        log.info(message);
         mailService.senMail(new NotificationEmail("Please Activate your account", user.getEmail(), message));
+        System.out.println(user.isEnabled());
 
     
 
@@ -79,7 +78,8 @@ public class AuthService {
         );
         fetchUserAndEnable(verificationTokenOptional.get());
     }
-
+    
+    @Transactional
     private void fetchUserAndEnable(VerificationToken verificationToken){
         String username = verificationToken.getUser().getUsername();
         User user = userRepository.findByUsername(username).orElseThrow(
