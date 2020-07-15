@@ -10,6 +10,8 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 
+import org.hibernate.annotations.Type;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -31,6 +33,7 @@ public class User {
     @NotEmpty(message = "Password is required")
     private String email;
     private Instant created;
+    @Type(type = "org.hibernate.type.NumericBooleanType")
     private boolean enabled;
 
     
