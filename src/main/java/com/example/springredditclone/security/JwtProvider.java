@@ -1,6 +1,10 @@
 package com.example.springredditclone.security;
+
 import com.example.springredditclone.exception.SpringRedditException;
 import io.jsonwebtoken.Jwts;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
@@ -14,6 +18,7 @@ import java.security.cert.CertificateException;
 public class JwtProvider {
 
 	private KeyStore keyStore;
+	private static final Logger logger = LoggerFactory.getLogger(JwtProvider.class);
 
 	@PostConstruct
 	public void init() {
@@ -23,7 +28,7 @@ public class JwtProvider {
 			InputStream resourceAsStream = getClass().getResourceAsStream("/springreddit.jks");
 			keyStore.load(resourceAsStream, "secret".toCharArray());
 			//keyStore.load(new FileInputStream("/springblog.jks"), "secret".toCharArray());
-			System.out.println("Pivate Key from init()= "+keyStore.getKey("springreddit", "secret".toCharArray()));
+			logger.info("Pivate Key from init()= "+keyStore.getKey("springreddit", "secret".toCharArray()));
 			
 			
 		} catch (KeyStoreException | CertificateException | NoSuchAlgorithmException | IOException | UnrecoverableKeyException e) {
