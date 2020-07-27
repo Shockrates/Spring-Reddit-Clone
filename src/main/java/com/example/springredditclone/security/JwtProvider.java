@@ -64,7 +64,18 @@ public class JwtProvider {
 
 	public boolean validateToken(String jwt) {
 		parser().setSigningKey(getPublicKey()).parseClaimsJws(jwt);
-		return false;
+		return true;
+	}
+
+	
+
+	public String getUsernameFromJWT(String token){
+		Claims claims = parser()
+				.setSigningKey(getPublicKey())
+				.parseClaimsJws(token)
+				.getBody();
+		return claims.getSubject();
+
 	}
 
 	private PublicKey getPublicKey() {
@@ -74,15 +85,6 @@ public class JwtProvider {
 			throw new SpringRedditException("Exception occured while retrieving public key from keystore");
 		}
 	
-	}
-
-	public String getUsernameFromJWT(String token){
-		Claims claims = parser()
-				.setSigningKey(getPublicKey())
-				.parseClaimsJws(token)
-				.getBody();
-		return claims.getSubject();
-
 	}
 
 	
