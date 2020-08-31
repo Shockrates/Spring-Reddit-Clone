@@ -15,7 +15,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 //Import Instants
-import static java.time.Instant.now;
+
 import static java.util.stream.Collectors.toList;
 
 @Service
@@ -24,25 +24,7 @@ import static java.util.stream.Collectors.toList;
 public class SubredditService {
 
     private final SubredditRepository subredditRepository;
-    
     private final SubredditMapper subredditMapper;
-
-    @Transactional(readOnly = true)
-	public List<SubredditDto> getAll() {
-        return subredditRepository.findAll()
-                .stream()
-                .map(subredditMapper::mapSubredditToDto)
-                .collect(toList());
-	}
-    @Transactional(readOnly = true)
-	public SubredditDto getSubreddit(Long id) {
-        Subreddit subreddit = subredditRepository.findById(id)
-                    .orElseThrow(
-                        () -> new SubredditNotFoundException("Subreddit not found with id -" + id)
-                    );
-        return subredditMapper.mapSubredditToDto(subreddit);
-		
-	}
 
     @Transactional
 	public SubredditDto save(SubredditDto subredditDto) {
@@ -50,6 +32,25 @@ public class SubredditService {
         subredditDto.setId(subreddit.getId());
 		return subredditDto;
     }
+
+    @Transactional(readOnly = true)
+	public List<SubredditDto> getAll() {
+        return subredditRepository.findAll()
+                .stream()
+                .map(subredditMapper::mapSubredditToDto)
+                .collect(toList());
+    }
+    
+    @Transactional(readOnly = true)
+	public SubredditDto getSubreddit(Long id) {
+        Subreddit subreddit = subredditRepository.findById(id)
+                    .orElseThrow(
+                        () -> new SubredditNotFoundException("Subreddit not found with id -" + id)
+                    );
+        return subredditMapper.mapSubredditToDto(subreddit);	
+	}
+
+    
     
 
     //---------HARD CODED MAPPINGS ------------------------------//
