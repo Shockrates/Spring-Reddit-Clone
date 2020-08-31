@@ -34,23 +34,23 @@ public class PostController {
     }
 
     @GetMapping("/")
-    public List<PostResponse> getAllPosts(){
-        return postService.getAllPosts();
+    public ResponseEntity<List<PostResponse>> getAllPosts(){
+        return status(HttpStatus.OK).body(postService.getAllPosts());
     }
 
     @GetMapping("/{id}")
-    public PostResponse getPost(@PathVariable Long id){
-        return postService.getPost(id);
+    public ResponseEntity<PostResponse> getPost(@PathVariable Long id){
+        return status(HttpStatus.OK).body(postService.getPost(id));
     }
 
     @GetMapping("by-subreddit/{id}")
-    public List<PostResponse> getPostBySubreddit(Long id){
-        return postService.getPostsBySubreddit(id);
+    public ResponseEntity<List<PostResponse>> getPostBySubreddit(Long id){
+        return status(HttpStatus.OK).body(postService.getPostsBySubreddit(id));
     }
 
     @GetMapping("by-user/{name}")
-    public List<PostResponse> getPostByUsername(String username){
-        return postService.getPostByUsername(username);
+    public ResponseEntity<List<PostResponse>> getPostByUsername(String username){
+        return status(HttpStatus.OK).body(postService.getPostByUsername(username));
     }
     
 
