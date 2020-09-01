@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.example.springredditclone.dto.SubredditDto;
 import com.example.springredditclone.model.Subreddit;
+import com.example.springredditclone.model.User;
 import com.example.springredditclone.repository.SubredditRepository;
 import com.example.springredditclone.exception.SubredditNotFoundException;
 import com.example.springredditclone.mapper.SubredditMapper;
@@ -25,10 +26,12 @@ public class SubredditService {
 
     private final SubredditRepository subredditRepository;
     private final SubredditMapper subredditMapper;
+    private final AuthService authService;
 
     @Transactional
 	public SubredditDto save(SubredditDto subredditDto) {
-        Subreddit subreddit = subredditRepository.save(subredditMapper.mapDtoToSubreddit(subredditDto));
+        User currentUser = authService.getCurrentUser();
+        Subreddit subreddit = subredditRepository.save(subredditMapper.mapDtoToSubreddit(subredditDto, currentUser));
         subredditDto.setId(subreddit.getId());
 		return subredditDto;
     }

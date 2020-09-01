@@ -14,12 +14,13 @@ import com.example.springredditclone.repository.PostRepository;
 import com.example.springredditclone.repository.SubredditRepository;
 import com.example.springredditclone.repository.UserRepository;
 
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import static java.util.stream.Collectors.toList;
 
@@ -27,6 +28,7 @@ import static java.util.stream.Collectors.toList;
 @Service
 @AllArgsConstructor
 @Transactional
+@Slf4j
 public class PostService {
 
 	
@@ -81,6 +83,7 @@ public class PostService {
 
 	@Transactional(readOnly = true)
 	public List<PostResponse> getPostByUsername(String username) {
+		log.info("USERNAME PASSED: "+ username);
 		User user = userRepository.findByUsername(username)
 			.orElseThrow(
 				() -> new UsernameNotFoundException(username)

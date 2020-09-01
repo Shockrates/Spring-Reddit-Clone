@@ -5,6 +5,8 @@ import java.util.List;
 import com.example.springredditclone.dto.SubredditDto;
 import com.example.springredditclone.model.Post;
 import com.example.springredditclone.model.Subreddit;
+import com.example.springredditclone.model.User;
+
 
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
@@ -25,6 +27,8 @@ public interface SubredditMapper {
 
     @InheritInverseConfiguration
     @Mapping(target = "posts", ignore = true)
-    Subreddit mapDtoToSubreddit(SubredditDto subreddit);
+    @Mapping(target = "user", source = "user")
+    @Mapping(target = "createdDate", expression = "java(java.time.Instant.now())")
+    Subreddit mapDtoToSubreddit(SubredditDto subreddit, User user);
     
 }

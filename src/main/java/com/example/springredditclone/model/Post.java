@@ -15,6 +15,7 @@ import javax.validation.constraints.NotBlank;
 import org.springframework.lang.Nullable;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -23,6 +24,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Post {
 
     @Id
