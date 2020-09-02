@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.AllArgsConstructor;
 
-import static org.springframework.http.ResponseEntity.status;
 
 @RestController 
 @RequestMapping("api/comments/")
@@ -31,9 +30,14 @@ public class CommentsController {
     }
 
     @GetMapping("/by-post/{postId}")
-    public ResponseEntity<List<CommentsDto>> getAllCommentsForPost(@RequestParam("postId") Long postId){
+    public ResponseEntity<List<CommentsDto>> getAllCommentsForPost(@RequestParam Long postId){
         return ResponseEntity.status(HttpStatus.OK).body(commentService.getCommentByPost(postId));
-    } 
+    }
+    
+    @GetMapping("/by-username/{username}")
+    public ResponseEntity<List<CommentsDto>> getAllCommentsFromUser(@RequestParam String username){
+        return ResponseEntity.status(HttpStatus.OK).body(commentService.getCommentByUser(username));
+    }
     
     
 }
