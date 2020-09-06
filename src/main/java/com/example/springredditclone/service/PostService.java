@@ -48,7 +48,9 @@ public class PostService {
 					() -> new SubredditNotFoundException(postRequest.getSubredditName())
 				);
 		User currentUser = authService.getCurrentUser();
-        postRepository.save(postMapper.map(postRequest, subreddit, currentUser));
+		Post post = postMapper.map(postRequest, subreddit, currentUser);
+		post.setVoteCount(0);
+        postRepository.save(post);
     }
 
 	@Transactional(readOnly = true)
