@@ -15,6 +15,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.*;
 import java.security.cert.CertificateException;
+import java.time.Instant;
+import java.util.Date;
+import org.springframework.beans.factory.annotation.Value;
 
 import static io.jsonwebtoken.Jwts.parser;
 
@@ -22,6 +25,8 @@ import static io.jsonwebtoken.Jwts.parser;
 public class JwtProvider {
 
 	private KeyStore keyStore;
+	@Value("${jwt.expiration.time}")
+	long jwtExpirationInMills;
 	private static final Logger logger = LoggerFactory.getLogger(JwtProvider.class);
 
 	@PostConstruct
@@ -40,6 +45,28 @@ public class JwtProvider {
 		}
 	}
 
+	public String generateToken(Authentication authentication) {
+
+		org.springframework.security.core.userdetails.User principal = (User)authentication.getPrincipal();
+		return Jwts.builder()
+		.setSubject(principal.getUsername())
+		.setIssuedAt(Date.from(Instant.now()))
+		.signWith(getPrivateKey())
+		.setExpiration(Date.from(Instant.now().plusMillis(jwtExpirationInMills)))
+		.compact();
+	}
+
+	public String generateTokenWithUserName(String username) {
+	
+		return Jwts.builder()
+		.setSubject(username)
+		.setIssuedAt(Date.from(Instant.now()))
+		.signWith(getPrivateKey())
+		.setExpiration(Date.from(Instant.now().plusMillis(jwtExpirationInMills)))
+		.compact();
+	}
+
+
 	private PrivateKey getPrivateKey() {
 		try {
 			//System.out.println("Pivate Key from getPrivateKey= "+keyStore.getKey("springreddit", "secret".toCharArray()));
@@ -51,14 +78,13 @@ public class JwtProvider {
 		
 	}
 	
-
-	public String generateToken(Authentication authentication) {
-		org.springframework.security.core.userdetails.User principal = (User)authentication.getPrincipal();
-		//System.out.println("Rivate Key = "+getPrivateKey());
-		return Jwts.builder()
-		.setSubject(principal.getUsername())
-		.signWith(getPrivateKey())
-		.compact();
+	private PublicKey getPublicKey() {
+		try {
+			return keyStore.getCertificate("springreddit").getPublicKey();
+		} catch (KeyStoreException e) {
+			throw new SpringRedditException("Exception occured while retrieving public key from keystore");
+		}
+	
 	}
 
 
@@ -66,8 +92,6 @@ public class JwtProvider {
 		parser().setSigningKey(getPublicKey()).parseClaimsJws(jwt);
 		return true;
 	}
-
-	
 
 	public String getUsernameFromJWT(String token){
 		Claims claims = parser()
@@ -78,14 +102,11 @@ public class JwtProvider {
 
 	}
 
-	private PublicKey getPublicKey() {
-		try {
-			return keyStore.getCertificate("springreddit").getPublicKey();
-		} catch (KeyStoreException e) {
-			throw new SpringRedditException("Exception occured while retrieving public key from keystore");
-		}
-	
+	public Long getJwtExpirationImMills(){
+		return jwtExpirationInMills;
 	}
+
+	
 
 	
 	

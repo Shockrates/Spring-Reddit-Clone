@@ -26,6 +26,7 @@ import lombok.AllArgsConstructor;
 
 import static java.time.Instant.now;
 
+import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -43,6 +44,7 @@ public class AuthService {
     private final MailContentBuilder mailContentBuilder;
     private final MailService mailService;
     private final JwtProvider jwtProvider;
+    private final RefreshTokenService refreshTokenService;
    
     //METHODS THAT ARE CALLED FROM AUTH CONTROLLER 
 
@@ -79,7 +81,12 @@ public class AuthService {
             loginRequest.getUsername(),loginRequest.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authenticate);
         String authenticationToken = jwtProvider.generateToken(authenticate);
-		return new AuthenticationResponse(authenticationToken, loginRequest.getUsername());
+        return AuthenticationResponse.builder()
+                    .authenticationToken(authenticationToken)
+                    .userName(loginRequest.getUsername())
+                    .refreshToken(refreshTokenService.generateRefreshToken().getToken())
+                    .expiresAt(Instant.now().plusMillis(jwtProvider.getJwtExpirationImMills()))
+                    .build();
 	}
 
 
