@@ -2,6 +2,7 @@ package com.example.springredditclone.service;
 
 import com.example.springredditclone.dto.AuthenticationResponse;
 import com.example.springredditclone.dto.LoginRequest;
+import com.example.springredditclone.dto.RefreshTokenRequest;
 import com.example.springredditclone.dto.RegisterRequest;
 import com.example.springredditclone.exception.SpringRedditException;
 import com.example.springredditclone.model.NotificationEmail;
@@ -11,6 +12,7 @@ import com.example.springredditclone.repository.UserRepository;
 import com.example.springredditclone.repository.VerificationTokenRepository;
 import com.example.springredditclone.security.JwtProvider;
 
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -87,6 +89,17 @@ public class AuthService {
                     .refreshToken(refreshTokenService.generateRefreshToken().getToken())
                     .expiresAt(Instant.now().plusMillis(jwtProvider.getJwtExpirationImMills()))
                     .build();
+    }
+    
+    public AuthenticationResponse refreshToken(RefreshTokenRequest refreshTokenRequest) {
+        refreshTokenService.validateRefreshToken(refreshTokenRequest.getRefreshToken());
+        String token = jwtProvider.generateTokenWithUserName(refreshTokenRequest.getUsername());
+        return AuthenticationResponse.builder()
+                    .authenticationToken(token)
+                    .userName(refreshTokenRequest.getUsername())
+                    .refreshToken(refreshTokenRequest.getRefreshToken())
+                    .expiresAt(Instant.now().plusMillis(jwtProvider.getJwtExpirationImMills()))
+                    .build();
 	}
 
 
@@ -127,7 +140,12 @@ public class AuthService {
 		return userRepository.findByUsername(principal.getUsername()).orElseThrow(
             () -> new UsernameNotFoundException("User name not found - " + principal.getUsername())
         );
-	}
+    }
+    
+    public boolean isLoggedIn(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return !(authentication instanceof AnonymousAuthenticationToken) && authentication.isAuthenticated();
+    }
 
 
     
