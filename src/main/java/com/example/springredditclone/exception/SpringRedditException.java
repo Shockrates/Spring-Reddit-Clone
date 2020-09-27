@@ -4,7 +4,12 @@ public class SpringRedditException extends RuntimeException  {
 
     
 
-    public SpringRedditException(String message, Exception exception){
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
+
+    public SpringRedditException(String message, Exception exception) {
         super(message, exception);
     }
 
