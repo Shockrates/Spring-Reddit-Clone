@@ -1,5 +1,7 @@
 package com.example.springredditclone.mapper;
 
+import java.util.Optional;
+
 import com.example.springredditclone.dto.PostRequest;
 import com.example.springredditclone.dto.PostResponse;
 import com.example.springredditclone.model.*;
@@ -13,13 +15,14 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
 
+
+
 //Is set as abstract class because we need to import information to calculate some values
 @Mapper(componentModel = "spring")
 public abstract class PostMapper {
 
     @Autowired
     private CommentRepository commentRepository;
-    
     @Autowired
     private VoteRepository voteRepository;
     @Autowired
@@ -39,8 +42,8 @@ public abstract class PostMapper {
     @Mapping(target = "url", source = "url")
     @Mapping(target = "commentCount", expression="java(getCommentCount(post))")
     @Mapping(target = "duration", expression = "java(getDuration(post))")
-    // @Mapping(target = "upVote", expression = "java(isPostUpVoted(post))")
-    // @Mapping(target = "downVote", expression = "java(isPostDownVoted(post))")
+    @Mapping(target = "upVote", expression = "java(isPostUpVoted(post))")
+    @Mapping(target = "downVote", expression = "java(isPostDownVoted(post))")
     public abstract PostResponse mapToDto(Post post);
 
     Integer getCommentCount(Post post){
@@ -59,9 +62,14 @@ public abstract class PostMapper {
         return checkUsersVoteType(post, VoteType.DOWNVOTE);
     }
 
-    private boolean checkUsersVoteType(Post post, VoteType upvote) {
+    private boolean checkUsersVoteType(Post post, VoteType voteType) {
         //TO DO: Make method that returns if user Upvoted or Downvoted current post
-        //if (authService.isLo)
+        if (authService.isLoggedIn()){
+            Optional<Vote> voteForPostByUser = voteRepository.findTopByPostAndUserOrderByVoteIdDesc(post, authService.getCurrentUser());
+        
+            return voteForPostByUser.filter(vote -> vote.getVoteType().equals(voteType))
+            .isPresent();
+        }
         return false;
     }
 

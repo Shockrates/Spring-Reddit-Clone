@@ -35,6 +35,7 @@ import java.util.UUID;
 
 @Service
 @AllArgsConstructor
+@Transactional
 public class AuthService {
 
     private static final String ACTIVATION_EMAIL = "http://localhost:8080/api/auth/accountVerification";
