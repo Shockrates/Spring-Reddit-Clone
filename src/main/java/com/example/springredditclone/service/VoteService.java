@@ -45,9 +45,18 @@ public class VoteService {
             throw new SpringRedditException("You have  already "+voteDto.getVoteType()+"'d this post");
         }
         if (VoteType.UPVOTE.equals(voteDto.getVoteType())){
-            post.setVoteCount(post.getVoteCount()+1);
+            if (voteByPostAnduser.isPresent()) {
+                post.setVoteCount(post.getVoteCount()+2); 
+            } else {
+                post.setVoteCount(post.getVoteCount()+1);  
+            }   
         } else {
-            post.setVoteCount(post.getVoteCount()-1);
+            if (voteByPostAnduser.isPresent()) {
+                post.setVoteCount(post.getVoteCount()-2); 
+            } else {
+                post.setVoteCount(post.getVoteCount()-1);  
+            }   
+            
         }
         Vote vote = voteMapper.mapToVote(voteDto, post, currentUser);
         voteRepository.save(vote);
