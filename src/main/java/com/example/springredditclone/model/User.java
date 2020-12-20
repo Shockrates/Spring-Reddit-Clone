@@ -31,7 +31,7 @@ public class User {
     @NotBlank(message = "Password is required")
     private String password;
     @Email
-    @NotEmpty(message = "Password is required")
+    @NotEmpty(message = "Email is required")
     @Column(unique=true)
     private String email;
     private Instant created;
